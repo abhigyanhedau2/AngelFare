@@ -26,10 +26,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.anglefare",
+      "package": "com.angelfare",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBQivdVNxU7quHhW_ARw2VuXKmHVwXhNMk"
+          "apiKey": "AIzaSyCJAbp6wb7WwnldtnCaTL5L47al6Buq9mo"
         },
         "permissions": [
           "ACCESS_COARSE_LOCATION",

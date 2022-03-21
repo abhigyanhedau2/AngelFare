@@ -1,15 +1,62 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions, ScrollView, Image, FlatList } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { colors, parameters } from '../global/styles';
 import { filterData } from '../global/data';
 import MapView, { PROVIDER_GOOGLE, } from 'react-native-maps';
-import mapStyle from '../global/mapStyle';
+import { mapStyle } from '../global/mapStyle';
+import * as Location from 'expo-location';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const HomeScreen = () => {
+
+    const [latlng, setLatlng] = useState({});
+
+    const checkPermission = async () => {
+        const hasPermission = await Location.requestForegroundPermissionsAsync();
+
+        if(hasPermission.status === 'granted')
+        {
+            const permisson = await askPermission();
+            return permisson;
+        }
+
+        return true;
+    }
+
+    const askPermission = async () => {
+        const permission = await Location.requestForegroundPermissionsAsync();
+        return permission.status === 'granted';
+    }
+
+    const getLocation = async () => {
+        try{
+            const {granted} = await Location.requestForegroundPermissionsAsync();
+
+            if(!granted)
+                return;
+
+            const {
+                coordinates: {latitude, longitude}, 
+            } = await Location.getCurrentPositionAsync();
+
+            setLatlng({latitude: latitude, longitude: longitude});
+        }catch(error){
+
+        }
+    }
+
+    const _map = useRef(1);
+
+    useEffect(() => {
+        checkPermission();
+        getLocation();
+        console.log(latlng);
+    }, [])
+    
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -34,42 +81,42 @@ const HomeScreen = () => {
                         </View>
                         <View>
                             <Image style={styles.image1}
-                                   source={require('../../assets/uberCar.png')} />
+                                source={require('../../assets/uberCar.png')} />
                         </View>
                     </View>
                 </View>
                 <View>
-                    <FlatList 
-                                numRows={4}
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                                data={filterData}
-                                keyExtractor={(item) => item.id}
-                                renderItem = {({item}) => (
-                                    <View style={styles.card}>
-                                    <View style={styles.view2}>
-                                        <Image style={styles.image2} source={item.image} />
-                                    </View>
-                                    <View>
-                                        <Text style={styles.title}>{item.name}</Text>
-                                    </View>
-                                    </View>
-                                )}          
+                    <FlatList
+                        numRows={4}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        data={filterData}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => (
+                            <View style={styles.card}>
+                                <View style={styles.view2}>
+                                    <Image style={styles.image2} source={item.image} />
+                                </View>
+                                <View>
+                                    <Text style={styles.title}>{item.name}</Text>
+                                </View>
+                            </View>
+                        )}
                     />
-                </View> 
+                </View>
                 <View style={styles.view3}>
                     <Text style={styles.text3} >Where To?</Text>
                     <View style={styles.view4}>
                         <Icon type="material-community"
-                              name="clock-time-four"
-                              color={colors.grey1}
-                              size={26}
+                            name="clock-time-four"
+                            color={colors.grey1}
+                            size={26}
                         />
-                        <Text style={{marginLeft:5}}>Now</Text>
+                        <Text style={{ marginLeft: 5 }}>Now</Text>
                         <Icon type="material-community"
-                              name="chevron-down"
-                              color={colors.grey1}
-                              size={26}
+                            name="chevron-down"
+                            color={colors.grey1}
+                            size={26}
                         />
                     </View>
                 </View>
@@ -83,15 +130,15 @@ const HomeScreen = () => {
                             />
                         </View>
                         <View>
-                            <Text style={{fontSize:18, color:colors.black}}>32 Olivia Rd</Text>
-                            <Text style={{color:colors.grey3}}>Klipfontein 83-IR, Boksburg</Text>
+                            <Text style={{ fontSize: 18, color: colors.black }}>32 Olivia Rd</Text>
+                            <Text style={{ color: colors.grey3 }}>Klipfontein 83-IR, Boksburg</Text>
                         </View>
                     </View>
                     <View>
                         <Icon type="material-community"
-                                    name="chevron-right"
-                                    color={colors.grey}
-                                    size={26}
+                            name="chevron-right"
+                            color={colors.grey}
+                            size={26}
                         />
                     </View>
                 </View>
@@ -105,22 +152,27 @@ const HomeScreen = () => {
                             />
                         </View>
                         <View>
-                            <Text style={{fontSize:18, color:colors.black}}>Hughes Industrial Park</Text>
-                            <Text style={{color:colors.grey3}}>Hughes,Boksburg</Text>
+                            <Text style={{ fontSize: 18, color: colors.black }}>Hughes Industrial Park</Text>
+                            <Text style={{ color: colors.grey3 }}>Hughes,Boksburg</Text>
                         </View>
                     </View>
                     <View>
                         <Icon type="material-community"
-                                    name="chevron-right"
-                                    color={colors.grey}
-                                    size={26}
+                            name="chevron-right"
+                            color={colors.grey}
+                            size={26}
                         />
                     </View>
-                </View>  
+                </View>
                 <Text style={styles.text4} >Around You</Text>
-                <View style={{alignItems:"center", justifyContent:"center"}}>
-                    <MapView provider={PROVIDER_GOOGLE}
-                             style={styles.map}
+                <View style={{ alignItems: "center", justifyContent: "center" }}>
+                    <MapView
+                        ref={_map}
+                        provider={PROVIDER_GOOGLE}
+                        style={styles.map}
+                        customMapStyle={mapStyle}
+                        showsUserLocation={true}
+                        followsUserLocation={true}
                     >
                     </MapView>
                 </View>
