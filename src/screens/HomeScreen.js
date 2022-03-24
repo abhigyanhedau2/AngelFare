@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions, ScrollView, Image, FlatList } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { colors, parameters } from '../global/styles';
-import { filterData } from '../global/data';
+import { filterData, carsAround } from '../global/data';
 import MapView, { PROVIDER_GOOGLE, } from 'react-native-maps';
 import { mapStyle } from '../global/mapStyle';
 import * as Location from 'expo-location';
@@ -17,8 +17,7 @@ const HomeScreen = () => {
     const checkPermission = async () => {
         const hasPermission = await Location.requestForegroundPermissionsAsync();
 
-        if(hasPermission.status === 'granted')
-        {
+        if (hasPermission.status === 'granted') {
             const permisson = await askPermission();
             return permisson;
         }
@@ -32,18 +31,18 @@ const HomeScreen = () => {
     }
 
     const getLocation = async () => {
-        try{
-            const {granted} = await Location.requestForegroundPermissionsAsync();
+        try {
+            const { granted } = await Location.requestForegroundPermissionsAsync();
 
-            if(!granted)
+            if (!granted)
                 return;
 
             const {
-                coordinates: {latitude, longitude}, 
+                coordinates: { latitude, longitude },
             } = await Location.getCurrentPositionAsync();
 
-            setLatlng({latitude: latitude, longitude: longitude});
-        }catch(error){
+            setLatlng({ latitude: latitude, longitude: longitude });
+        } catch (error) {
 
         }
     }
@@ -55,7 +54,7 @@ const HomeScreen = () => {
         getLocation();
         console.log(latlng);
     }, [])
-    
+
 
     return (
         <View style={styles.container}>
@@ -173,7 +172,17 @@ const HomeScreen = () => {
                         customMapStyle={mapStyle}
                         showsUserLocation={true}
                         followsUserLocation={true}
+                        initialRegion={{...carsAround[0], latitudeDelta: 0.008, longitudeDelta: 0.008}}
                     >
+                        {carsAround.map((item, index) =>
+                            <MapView.Marker coordinate={item} key={index.toString()}>
+                                <Image
+                                    source={require('../../assets/carMarker.png')}
+                                    style={styles.carsAround}
+                                    resizeMode="cover"
+                                />
+                            </MapView.Marker>
+                        )}
                     </MapView>
                 </View>
             </ScrollView>
