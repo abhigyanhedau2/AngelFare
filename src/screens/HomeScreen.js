@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, ScrollView, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { colors, parameters } from '../global/styles';
 import { filterData, carsAround } from '../global/data';
@@ -10,7 +10,7 @@ import * as Location from 'expo-location';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
 
     const [latlng, setLatlng] = useState({});
 
@@ -74,9 +74,11 @@ const HomeScreen = () => {
                     <View style={styles.view1}>
                         <View style={styles.view8}>
                             <Text style={styles.text2} >Book a cab to a health center near you</Text>
-                            <View style={styles.button1} >
-                                <Text style={styles.button1Text} >Ride with AngelFare</Text>
-                            </View>
+                            <TouchableOpacity onPress={() => {navigation.navigate("RequestScreen")}}>
+                                <View style={styles.button1} >
+                                    <Text style={styles.button1Text} >Ride with AngelFare</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                         <View>
                             <Image style={styles.image1}
