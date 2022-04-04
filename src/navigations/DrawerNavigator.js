@@ -6,6 +6,8 @@ import { colors } from "../global/styles";
 
 const Drawer = createDrawerNavigator()
 
+// sdjfhgsdiucg
+
 export default function DrawerNavigator() {
     return (
         <Drawer.Navigator>
